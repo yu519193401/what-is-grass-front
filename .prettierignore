@@ -1,0 +1,5 @@
+build/
+__generated__/
+.expo/
+.expo-shared/
+.next/

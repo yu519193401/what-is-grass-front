@@ -1,0 +1,6 @@
+{
+  "packages/web/**/*.{js,ts,tsx}": "yarn workspace @what-is-grass/web eslint",
+  "packages/mobile/**/*.{js,ts,tsx}": "yarn workspace @what-is-grass/mobile eslint",
+  "packages/shared/**/*.{js,ts,tsx}": "yarn workspace @what-is-grass/shared eslint",
+  "*.{js,ts,json}": "prettier --write"
+}
