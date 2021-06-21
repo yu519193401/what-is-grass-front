@@ -1,24 +1,4 @@
 import { rest } from 'msw';
+import { getUser } from './resolvers/user';
 
-export const handlers = [
-  rest.get('/user', (_, res, ctx) => {
-    // // Check if the user is authenticated in this session
-    // const isAuthenticated = sessionStorage.getItem('is-authenticated');
-    // if (!isAuthenticated) {
-    //   // If not authenticated, respond with a 403 error
-    //   return res(
-    //     ctx.status(403),
-    //     ctx.json({
-    //       errorMessage: 'Not authorized',
-    //     })
-    //   );
-    // }
-    // // If authenticated, return a mocked user details
-    return res(
-      ctx.status(200),
-      ctx.json({
-        username: 'atg',
-      })
-    );
-  }),
-];
+export const handlers = [rest.get('/user', getUser)];
