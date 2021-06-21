@@ -4,7 +4,7 @@
   "main": "build/index.js",
   "typings": "build/index.d.ts",
   "scripts": {
-    "dev": "rm -rf build && tsc --watch",
+    "dev": "tsc --watch",
     "build": "rm -rf build && tsc",
     "lint": "eslint --ext .js,.ts,.tsx .",
     "type-check": "tsc --noEmit"
