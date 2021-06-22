@@ -6,10 +6,41 @@ what はくさ。
 
 言葉の Wikipedia を作ろうとしてる。
 
+## 始め方
+
+```bash
+$ git clone https://github.com/shibayaman/what-is-grass-front.git
+
+# yarn workspace を使っているので yarn でインストールして欲しい。
+$ yarn install
+```
+
 ## 構成
 
-| フォルダ | 説明                           |
-| -------- | ------------------------------ |
-| web      | Web サイト版                   |
-| mobile   | モバイル版                     |
-| shared   | web と mobile で共有するコード |
+| フォルダ | パッケージ名          | 説明                           |
+| -------- | --------------------- | ------------------------------ |
+| web      | @what-is-grass/web    | Web サイト版                   |
+| mobile   | @what-is-grass/mobile | モバイル版                     |
+| shared   | @what-is-grass/shared | web と mobile で共有するコード |
+
+## web
+
+開発サーバーの起動
+
+```
+$ yarn dev:web
+```
+
+## shared
+
+変更検知してビルド
+
+```
+$ yarn dev:shared
+```
+
+1 回だけビルド
+
+```
+$ yarn build:shard
+```
