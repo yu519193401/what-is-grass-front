@@ -1,10 +1,13 @@
 import Link from 'next/link';
 import Layout from '../components/Layout';
-import { greet } from '@what-is-grass/shared';
+import { greet, useDispatch, useSelector, dummy } from '@what-is-grass/shared';
 import { useState, useEffect } from 'react';
 
 const IndexPage: React.FC = () => {
   const [user, setUser] = useState('World');
+  const indices = useSelector((state) => state.questions.indices);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const callApi = async () => {
@@ -23,6 +26,16 @@ const IndexPage: React.FC = () => {
         <Link href="/about">
           <a>About</a>
         </Link>
+        <br />
+        <button
+          type="button"
+          onClick={() => {
+            dispatch(dummy());
+          }}
+        >
+          dispatch questions/dummy
+        </button>
+        <pre>{JSON.stringify(indices, null, 2)}</pre>
       </p>
     </Layout>
   );
