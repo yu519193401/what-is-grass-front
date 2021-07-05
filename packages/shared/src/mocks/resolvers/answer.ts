@@ -24,3 +24,22 @@ export const newAnswer: Resolver = (_, res, ctx) => {
     })
   );
 };
+
+export const getAnswer: Resolver = (_, res, ctx) => {
+  return res(
+    ctx.status(200),
+    ctx.json({
+      answer: [
+        {
+          answer_id: 101,
+          user_id: 1001,
+          index_id: '回答する見出しのid',
+          origin: '日本語',
+          informative_count: 0,
+          definition: 'くさ',
+          date: '2021-06-22T12:00:00.000+09:00',
+        },
+      ],
+    })
+  );
+};
