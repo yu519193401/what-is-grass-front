@@ -22,3 +22,13 @@ export const newUser: Resolver = (_, res, ctx) => {
     })
   );
 };
+
+export const editUser: Resolver = (_, res, ctx) => {
+  return res(
+    ctx.status(201),
+    ctx.json({
+      username: 'AtamaHagetaro',
+      email: 'hage@hage.com',
+    })
+  );
+};
