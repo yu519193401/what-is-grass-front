@@ -1,10 +1,21 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Index } from '../../types';
 
+// mswが有効化される前にクエリーが飛んじゃう謎の挙動があったので
+// デフォルトのfetchをPromiseでラップしてみたら期待通りに動いた。
+// いまいちわからん。
+const fetchFn: (
+  input: RequestInfo,
+  init?: RequestInit | undefined
+) => Promise<Response> = async (input, init) => {
+  return await fetch(input, init);
+};
+
 export const wordApi = createApi({
   reducerPath: 'wordApi',
   baseQuery: fetchBaseQuery({
     baseUrl: '/',
+    fetchFn: fetchFn,
   }),
   endpoints: (builder) => ({
     getIndices: builder.query<[Index], void>({
