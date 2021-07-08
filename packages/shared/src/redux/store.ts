@@ -1,10 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { questionReducer } from './features/question';
+import { wordApi } from './services/word';
 
 export const store = configureStore({
   reducer: {
     questions: questionReducer,
+    [wordApi.reducerPath]: wordApi.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(wordApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
