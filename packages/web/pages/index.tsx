@@ -1,17 +1,10 @@
 import Link from 'next/link';
 import Layout from '../components/Layout';
-import {
-  greet,
-  useDispatch,
-  useSelector,
-  dummy,
-  useGetIndicesQuery,
-} from '@what-is-grass/shared';
+import { greet, useDispatch, useSelector, dummy } from '@what-is-grass/shared';
 import { useState, useEffect } from 'react';
 
 const IndexPage: React.FC = () => {
   const [user, setUser] = useState('World');
-  const { data: indices, isLoading } = useGetIndicesQuery();
 
   const dummyIndices = useSelector((state) => state.questions.indices);
   const dispatch = useDispatch();
@@ -44,7 +37,6 @@ const IndexPage: React.FC = () => {
         dispatch questions/dummy
       </button>
       <pre>{JSON.stringify(dummyIndices, null, 2)}</pre>
-      {isLoading ? 'loading...' : <pre>{JSON.stringify(indices, null, 2)}</pre>}
     </Layout>
   );
 };

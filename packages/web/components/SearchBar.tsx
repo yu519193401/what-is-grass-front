@@ -1,22 +1,31 @@
 import React, { useState } from 'react';
+import { useLazyGetIndicesQuery, Index } from '@what-is-grass/shared';
+import { useEffect } from 'react';
 
 type Props = {
-  setQuestions: (questions: never[]) => void;
+  setQuestions: (questions: Index[]) => void;
 };
 
 const SearchBar: React.FC<Props> = (props) => {
   const [keyword, setSearch] = useState('');
-  const [languageId, setLanguageId] = useState('');
-  const [includeNoAnswerId, setIncludeNoAnswerId] = useState('');
-  const [sortId, setSortId] = useState('');
+  const [languageId, setLanguageId] = useState(1);
+  const [includeNoAnswerId, setIncludeNoAnswerId] = useState(1);
+  const [sortId, setSortId] = useState(1);
+  const [triggerGetIndicesQuery, { data, isLoading }] =
+    useLazyGetIndicesQuery();
 
-  async function handleOnSubmit(event: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    data && props.setQuestions(data);
+  }, [data]);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const res = await fetch(
-      `/question?keyword=${keyword}&sort=${sortId}&language_id=${languageId}&include_no_answer=${includeNoAnswerId}`
-    );
-    const data = await res.json();
-    props.setQuestions(data.indices);
+    triggerGetIndicesQuery({
+      keyword,
+      language_id: languageId,
+      include_no_answer: includeNoAnswerId,
+      sort: sortId,
+    });
   }
 
   function handleKeywordChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -24,22 +33,22 @@ const SearchBar: React.FC<Props> = (props) => {
   }
 
   function handleLanguageIdChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setLanguageId(event.target.value);
+    setLanguageId(+event.target.value);
   }
 
   function handleSortIdChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSortId(event.target.value);
+    setSortId(+event.target.value);
   }
 
   function handleIncludeNoAnswerIdChange(
     event: React.ChangeEvent<HTMLSelectElement>
   ) {
-    setIncludeNoAnswerId(event.target.value);
+    setIncludeNoAnswerId(+event.target.value);
   }
 
   return (
     <div>
-      <form onSubmit={handleOnSubmit}>
+      <form onSubmit={handleSubmit}>
         <div className="search-box">
           <div className="search-input">
             <input
@@ -47,8 +56,7 @@ const SearchBar: React.FC<Props> = (props) => {
               aria-label="なんかを聞きたいの？"
               onChange={handleKeywordChange}
             />
-
-            <input type="submit" value="検索" />
+            <input type="submit" value="検索" disabled={isLoading} />
           </div>
         </div>
         <div>
