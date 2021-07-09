@@ -7,4 +7,4 @@ export {
   useAppDispatch as useDispatch,
   useAppSelector as useSelector,
 } from './redux/hooks';
-export { useGetIndicesQuery } from './redux/services/word';
+export { useGetIndicesQuery, useAddIndexMutation } from './redux/services/word';

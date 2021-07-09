@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Index } from '../../types';
+import { Index, NewIndexResponse, NewIndexRequest } from '../../types';
 
 // mswが有効化される前にクエリーが飛んじゃう謎の挙動があったので
 // デフォルトのfetchをPromiseでラップしてみたら期待通りに動いた。
@@ -21,8 +21,16 @@ export const wordApi = createApi({
     getIndices: builder.query<[Index], void>({
       query: () => 'question',
     }),
+    addIndex: builder.mutation<NewIndexResponse, NewIndexRequest>({
+      query: (body) => ({
+        url: `question`,
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 });
 
 // using TS 4.0
 export const useGetIndicesQuery = wordApi.endpoints.getIndices.useQuery;
+export const useAddIndexMutation = wordApi.endpoints.addIndex.useMutation;

@@ -1,5 +1,6 @@
 import Layout from '../components/Layout';
 import React, { useState } from 'react';
+import { useAddIndexMutation } from '@what-is-grass/shared';
 
 const getLanguages = () => [
   {
@@ -15,6 +16,7 @@ const getLanguages = () => [
 const IndexPage: React.FC = () => {
   const [index, setIndex] = useState('');
   const [languageId, setLanguageId] = useState<string | null>(null);
+  const [addPost, { isLoading }] = useAddIndexMutation();
 
   const handleIndexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIndex(e.target.value);
@@ -26,17 +28,7 @@ const IndexPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const res = await fetch('/question', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ language: languageId, index }),
-    });
-
-    const data = await res.json();
-    console.log(data);
+    addPost({ language_id: +(languageId || 1), index });
   };
 
   return (
@@ -60,7 +52,13 @@ const IndexPage: React.FC = () => {
           とはどういう意味ですか
         </label>
         <br />
-        <input type="submit" aria-label="質問を投稿" value="投稿" />
+        <input
+          type="submit"
+          disabled={isLoading}
+          aria-label="質問を投稿"
+          value="投稿"
+        />
+        {isLoading ? '送信中...' : null}
       </form>
     </Layout>
   );
