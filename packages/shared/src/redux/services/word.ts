@@ -5,7 +5,7 @@ import {
   NewIndexRequest,
   GetIndicesRequest,
   GetIndicesResponse,
-} from '../../types';
+} from '../../types/indexType';
 
 // mswが有効化される前にクエリーが飛んじゃう謎の挙動があったので
 // デフォルトのfetchをPromiseでラップしてみたら期待通りに動いた。

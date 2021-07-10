@@ -11,4 +11,4 @@ export {
   useLazyGetIndicesQuery,
   useAddIndexMutation,
 } from './redux/services/word';
-export { Index } from './types';
+export { Index } from './types/indexType';
