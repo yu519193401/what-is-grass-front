@@ -1,14 +1,7 @@
 import React from 'react';
+import { Answer } from '@what-is-grass/shared';
 
-type Props = {
-  answer_id: number;
-  user_id: number;
-  index_id: string;
-  origin: string;
-  informative_count: number;
-  definition: string;
-  date: string;
-};
+type Props = Answer;
 
 const AnswerItem: React.FC<Props> = (props) => {
   return (

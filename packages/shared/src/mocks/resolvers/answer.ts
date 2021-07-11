@@ -33,10 +33,17 @@ export const getAnswer: Resolver = (_, res, ctx) => {
         {
           answer_id: 101,
           user_id: 1001,
-          index_id: '回答する見出しのid',
+          index_id: 101,
           origin: '日本語',
           informative_count: 0,
           definition: 'くさ',
+          note: '草を超えることもあります',
+          example: [
+            {
+              example_id: 101,
+              example_sentence: '草超えて森超えてモリーファンタジー',
+            },
+          ],
           date: '2021-06-22T12:00:00.000+09:00',
         },
       ],
