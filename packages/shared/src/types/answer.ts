@@ -10,12 +10,13 @@ export type Answer = {
   date: string;
 };
 
-export type NewAnswerRequest = Partial<
-  Pick<Answer, 'index_id' | 'definition' | 'origin' | 'note'>
-> &
-  Pick<Answer, 'index_id' | 'definition'> & {
-    example?: Omit<Example, 'example_id'>[];
-  };
+export type NewAnswerRequest = {
+  index_id: Answer['index_id'];
+  definition: Answer['definition'];
+  origin?: Answer['origin'];
+  note?: Answer['note'];
+  example?: Pick<Example, 'example_sentence'>[];
+};
 export type NewAnswerResponse = Answer;
 
 export type Example = {
