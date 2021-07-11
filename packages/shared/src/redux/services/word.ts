@@ -6,7 +6,13 @@ import {
   GetIndicesRequest,
   GetIndicesResponse,
 } from '../../types/indexType';
-import { NewAnswerRequest, NewAnswerResponse } from '../../types/answer';
+import {
+  Answer,
+  NewAnswerRequest,
+  NewAnswerResponse,
+  GetAnswersRequest,
+  GetANswersResponse,
+} from '../../types/answer';
 
 // mswが有効化される前にクエリーが飛んじゃう謎の挙動があったので
 // デフォルトのfetchをPromiseでラップしてみたら期待通りに動いた。
@@ -39,6 +45,13 @@ export const wordApi = createApi({
         body,
       }),
     }),
+    getAnswers: builder.query<Answer[], GetAnswersRequest>({
+      query: (params) => ({
+        url: 'answer',
+        params,
+      }),
+      transformResponse: (res: GetANswersResponse) => res.answer,
+    }),
     addAnswer: builder.mutation<NewAnswerResponse, NewAnswerRequest>({
       query: (body) => ({
         url: 'answer',
@@ -52,4 +65,5 @@ export const wordApi = createApi({
 // using TS 4.0
 export const useLazyGetIndicesQuery = wordApi.endpoints.getIndices.useLazyQuery;
 export const useAddIndexMutation = wordApi.endpoints.addIndex.useMutation;
+export const useGetAnswersQuery = wordApi.endpoints.getAnswers.useQuery;
 export const useAddAnswerMutation = wordApi.endpoints.addAnswer.useMutation;
