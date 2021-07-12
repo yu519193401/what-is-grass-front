@@ -9,7 +9,7 @@ type Props = {
   date: string;
 };
 
-const ListItem: React.FC<Props> = (props) => {
+const IndexItem: React.FC<Props> = (props) => {
   return (
     <a title="クリックして回答する">
       <div>
@@ -27,4 +27,4 @@ const ListItem: React.FC<Props> = (props) => {
   );
 };
 
-export default ListItem;
+export default IndexItem;

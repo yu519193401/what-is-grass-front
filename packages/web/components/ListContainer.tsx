@@ -1,5 +1,5 @@
 import React from 'react';
-import ListItem from '../components/ListItem';
+import IndexItem from './IndexItem';
 
 type Props = {
   questions: {
@@ -18,7 +18,7 @@ const ListContainer: React.FC<Props> = (props) => {
     <div>
       {props.questions.map((question) => {
         return (
-          <ListItem
+          <IndexItem
             key={question.index_id}
             index={question.index}
             questioner={question.questioner}
