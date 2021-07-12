@@ -1,5 +1,6 @@
 import React from 'react';
 import { Index } from '@what-is-grass/shared';
+import Link from 'next/link';
 
 type Props = {
   question: Index;
@@ -7,7 +8,7 @@ type Props = {
 
 const IndexItem: React.FC<Props> = ({ question }) => {
   return (
-    <a title="クリックして回答する">
+    <Link href={`/answers/${question.index_id}`}>
       <div>
         <h4>
           {question.questioner}:{question.index}
@@ -19,7 +20,7 @@ const IndexItem: React.FC<Props> = ({ question }) => {
         </div>
         <div>{question.date}</div>
       </div>
-    </a>
+    </Link>
   );
 };
 

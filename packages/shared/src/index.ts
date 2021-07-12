@@ -10,6 +10,7 @@ export {
 export {
   useLazyGetIndicesQuery,
   useAddIndexMutation,
+  useLazyGetAnswersQuery,
   useGetAnswersQuery,
   useAddAnswerMutation,
 } from './redux/services/word';
