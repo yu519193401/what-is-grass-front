@@ -1,27 +1,23 @@
 import React from 'react';
+import { Index } from '@what-is-grass/shared';
 
 type Props = {
-  index: string;
-  questioner: string;
-  frequently_used_count: number;
-  answer_count: number;
-  best_answer: string;
-  date: string;
+  question: Index;
 };
 
-const IndexItem: React.FC<Props> = (props) => {
+const IndexItem: React.FC<Props> = ({ question }) => {
   return (
     <a title="クリックして回答する">
       <div>
         <h4>
-          {props.questioner}:{props.index}
+          {question.questioner}:{question.index}
         </h4>
 
-        <div>{props.best_answer}</div>
+        <div>{question.best_answer}</div>
         <div>
-          いいね：{props.frequently_used_count},回答数{props.answer_count}
+          いいね：{question.frequently_used_count},回答数{question.answer_count}
         </div>
-        <div>{props.date}</div>
+        <div>{question.date}</div>
       </div>
     </a>
   );
