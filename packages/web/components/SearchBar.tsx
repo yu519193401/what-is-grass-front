@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { useLazyGetIndicesQuery, Index } from '@what-is-grass/shared';
+import {
+  searchTriggered,
+  useDispatch,
+  useLazyGetIndicesQuery,
+  Index,
+} from '@what-is-grass/shared';
 import { useEffect } from 'react';
 
 type Props = {
@@ -11,8 +16,11 @@ const SearchBar: React.FC<Props> = (props) => {
   const [languageId, setLanguageId] = useState(1);
   const [includeNoAnswerId, setIncludeNoAnswerId] = useState(1);
   const [sortId, setSortId] = useState(1);
+
   const [triggerGetIndicesQuery, { data, isLoading }] =
     useLazyGetIndicesQuery();
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     data && props.setQuestions(data);
@@ -20,12 +28,16 @@ const SearchBar: React.FC<Props> = (props) => {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    triggerGetIndicesQuery({
+
+    const body = {
       keyword,
       language_id: languageId,
       include_no_answer: includeNoAnswerId,
       sort: sortId,
-    });
+    };
+
+    triggerGetIndicesQuery(body);
+    dispatch(searchTriggered(body));
   }
 
   function handleKeywordChange(event: React.ChangeEvent<HTMLInputElement>) {
