@@ -2,11 +2,12 @@ import Layout from '../components/Layout';
 import { useState } from 'react';
 import SearchBar from '../components/SearchBar';
 import ListContainer from '../components/ListContainer';
+import { Index } from '@what-is-grass/shared';
 
 const Search: React.FC = () => {
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState<Index[]>([]);
 
-  const updateQuestion = (questions: never[]) => {
+  const updateQuestion = (questions: Index[]) => {
     setQuestions(questions);
   };
 

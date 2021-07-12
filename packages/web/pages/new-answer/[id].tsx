@@ -1,6 +1,7 @@
 import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { useAddAnswerMutation } from '@what-is-grass/shared';
 
 const useFormValue: <T>(updater: (e: React.ChangeEvent<T>) => string) => {
   value: string;
@@ -19,6 +20,7 @@ const useFormValue: <T>(updater: (e: React.ChangeEvent<T>) => string) => {
 const NewAnswerPage: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
+  const [addAnswer, { isLoading }] = useAddAnswerMutation();
 
   const textAreaUpdater = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     return e.target.value;
@@ -33,21 +35,12 @@ const NewAnswerPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch('/answer', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        index_id: id,
-        definition: definition.value,
-        origin: origin.value,
-        note: note.value,
-      }),
+    addAnswer({
+      index_id: +id,
+      definition: definition.value,
+      origin: origin.value,
+      note: note.value,
     });
-
-    const data = await res.json();
-    console.log(data);
   };
 
   return (
@@ -71,7 +64,8 @@ const NewAnswerPage: React.FC = () => {
           備考: <textarea {...note} />
         </label>
         <br />
-        <input type="submit" value="回答" />
+        <input type="submit" value="回答" disabled={isLoading} />
+        {isLoading ? '送信中...' : null}
       </form>
     </Layout>
   );
