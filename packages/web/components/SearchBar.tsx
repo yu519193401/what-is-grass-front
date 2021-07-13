@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLazyGetIndicesQuery, Index } from '@what-is-grass/shared';
 import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 type Props = {
   setQuestions: (questions: Index[]) => void;
@@ -13,6 +14,7 @@ const SearchBar: React.FC<Props> = (props) => {
   const [sortId, setSortId] = useState(1);
   const [triggerGetIndicesQuery, { data, isLoading }] =
     useLazyGetIndicesQuery();
+  const router = useRouter();
 
   useEffect(() => {
     data && props.setQuestions(data);
@@ -83,10 +85,16 @@ const SearchBar: React.FC<Props> = (props) => {
           </select>
         </div>
       </form>
+
       <button
         className="float-right"
         onClick={() => {
-          console.log('A');
+          router.push({
+            pathname: '/new-question',
+            query: {
+              keyword,
+            },
+          });
         }}
       >
         質問
