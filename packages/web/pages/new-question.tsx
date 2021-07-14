@@ -1,6 +1,7 @@
 import Layout from '../components/Layout';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAddIndexMutation } from '@what-is-grass/shared';
+import { useRouter } from 'next/router';
 
 const getLanguages = () => [
   {
@@ -14,9 +15,17 @@ const getLanguages = () => [
 ];
 
 const IndexPage: React.FC = () => {
-  const [index, setIndex] = useState('');
+  const router = useRouter();
+  const keyword = router.query.keyword as string;
+  const [index, setIndex] = useState(keyword || '');
   const [languageId, setLanguageId] = useState<string | null>(null);
   const [addPost, { isLoading }] = useAddIndexMutation();
+
+  useEffect(() => {
+    if (keyword) {
+      setIndex(keyword);
+    }
+  }, [keyword]);
 
   const handleIndexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIndex(e.target.value);
