@@ -1,26 +1,37 @@
 import React, { useState } from 'react';
 import {
   searchTriggered,
+  useSelector,
   useDispatch,
-  useLazyGetIndicesQuery,
+  useGetIndicesQuery,
   Index,
 } from '@what-is-grass/shared';
 import { useEffect } from 'react';
+import { shallowEqual } from 'react-redux';
 
 type Props = {
   setQuestions: (questions: Index[]) => void;
 };
 
 const SearchBar: React.FC<Props> = (props) => {
-  const [keyword, setSearch] = useState('');
-  const [languageId, setLanguageId] = useState(1);
-  const [includeNoAnswerId, setIncludeNoAnswerId] = useState(1);
-  const [sortId, setSortId] = useState(1);
-
-  const [triggerGetIndicesQuery, { data, isLoading }] =
-    useLazyGetIndicesQuery();
-
   const dispatch = useDispatch();
+  const latestSearchRequest = useSelector(
+    (state) => state.questions.latestSearchRequest,
+    shallowEqual
+  );
+
+  const [keyword, setSearch] = useState(latestSearchRequest?.keyword ?? '');
+  const [languageId, setLanguageId] = useState(
+    latestSearchRequest?.language_id ?? 1
+  );
+  const [includeNoAnswerId, setIncludeNoAnswerId] = useState(
+    latestSearchRequest?.include_no_answer ?? 1
+  );
+  const [sortId, setSortId] = useState(latestSearchRequest?.sort ?? 1);
+
+  const { data, isLoading } = useGetIndicesQuery(latestSearchRequest!, {
+    skip: latestSearchRequest === null,
+  });
 
   useEffect(() => {
     data && props.setQuestions(data);
@@ -36,7 +47,6 @@ const SearchBar: React.FC<Props> = (props) => {
       sort: sortId,
     };
 
-    triggerGetIndicesQuery(body);
     dispatch(searchTriggered(body));
   }
 
@@ -66,19 +76,24 @@ const SearchBar: React.FC<Props> = (props) => {
             <input
               placeholder="なんかを聞きたいの？"
               aria-label="なんかを聞きたいの？"
+              value={keyword}
               onChange={handleKeywordChange}
             />
             <input type="submit" value="検索" disabled={isLoading} />
           </div>
         </div>
         <div>
-          <select className="search-lauguage" onChange={handleLanguageIdChange}>
+          <select
+            className="search-lauguage"
+            value={languageId}
+            onChange={handleLanguageIdChange}
+          >
             <option value="1">日本語</option>
             <option value="2">英語</option>
           </select>
         </div>
         <div>
-          <select className="sort" onChange={handleSortIdChange}>
+          <select className="sort" value={sortId} onChange={handleSortIdChange}>
             <option value="1">日付</option>
             <option value="2">役立Count</option>
             <option value="3">回答者数</option>
@@ -87,6 +102,7 @@ const SearchBar: React.FC<Props> = (props) => {
         <div>
           <select
             className="include_no_answer"
+            value={includeNoAnswerId}
             onChange={handleIncludeNoAnswerIdChange}
           >
             <option value="1">全て</option>

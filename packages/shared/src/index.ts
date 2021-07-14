@@ -8,6 +8,7 @@ export {
   useAppSelector as useSelector,
 } from './redux/hooks';
 export {
+  useGetIndicesQuery,
   useLazyGetIndicesQuery,
   useAddIndexMutation,
   useLazyGetAnswersQuery,
