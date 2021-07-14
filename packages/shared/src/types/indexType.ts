@@ -22,3 +22,6 @@ export type GetIndicesRequest = {
 export type GetIndicesResponse = {
   indices: Index[];
 };
+
+export type GetUserIndicesRequest = Partial<Omit<GetIndicesRequest, 'keyword'>>;
+export type GetUserIndicesResponse = GetIndicesResponse;

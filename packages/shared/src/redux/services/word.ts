@@ -5,6 +5,8 @@ import {
   NewIndexRequest,
   GetIndicesRequest,
   GetIndicesResponse,
+  GetUserIndicesRequest,
+  GetUserIndicesResponse,
 } from '../../types/indexType';
 import {
   Answer,
@@ -38,6 +40,13 @@ export const wordApi = createApi({
       }),
       transformResponse: (res: GetIndicesResponse) => res.indices,
     }),
+    getUserIndices: builder.query<Index[], GetUserIndicesRequest>({
+      query: (params) => ({
+        url: 'user/question-list',
+        params,
+      }),
+      transformResponse: (res: GetUserIndicesResponse) => res.indices,
+    }),
     addIndex: builder.mutation<NewIndexResponse, NewIndexRequest>({
       query: (body) => ({
         url: `question`,
@@ -65,6 +74,7 @@ export const wordApi = createApi({
 // using TS 4.0
 export const useGetIndicesQuery = wordApi.endpoints.getIndices.useQuery;
 export const useLazyGetIndicesQuery = wordApi.endpoints.getIndices.useLazyQuery;
+export const useGetUserIndicesQuery = wordApi.endpoints.getUserIndices.useQuery;
 export const useAddIndexMutation = wordApi.endpoints.addIndex.useMutation;
 export const useLazyGetAnswersQuery = wordApi.endpoints.getAnswers.useLazyQuery;
 export const useGetAnswersQuery = wordApi.endpoints.getAnswers.useQuery;
