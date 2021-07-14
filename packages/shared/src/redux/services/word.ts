@@ -63,7 +63,9 @@ export const wordApi = createApi({
 });
 
 // using TS 4.0
+export const useGetIndicesQuery = wordApi.endpoints.getIndices.useQuery;
 export const useLazyGetIndicesQuery = wordApi.endpoints.getIndices.useLazyQuery;
 export const useAddIndexMutation = wordApi.endpoints.addIndex.useMutation;
+export const useLazyGetAnswersQuery = wordApi.endpoints.getAnswers.useLazyQuery;
 export const useGetAnswersQuery = wordApi.endpoints.getAnswers.useQuery;
 export const useAddAnswerMutation = wordApi.endpoints.addAnswer.useMutation;

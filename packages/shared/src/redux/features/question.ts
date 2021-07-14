@@ -1,38 +1,23 @@
-import { createSlice } from '@reduxjs/toolkit';
-
-export type Index = {
-  index_id: number;
-  index: string;
-  questioner: number;
-  frequently_used_count: number;
-  answer_count: number;
-  best_answer: string;
-  date: string;
-};
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { GetIndicesRequest } from '../../types/indexType';
 
 const initialState: {
-  indices: Index[];
+  latestSearchRequest: GetIndicesRequest | null;
 } = {
-  indices: [],
+  latestSearchRequest: null,
 };
 
 const questionSlice = createSlice({
   name: 'index',
   initialState,
   reducers: {
-    dummy: (state) => {
-      state.indices.push({
-        index_id: state.indices.length,
-        index: 'はげ',
-        questioner: 1,
-        frequently_used_count: 0,
-        answer_count: 1,
-        best_answer: '髪がない',
-        date: '2021-06-29T12:00:00.000+09:00',
-      });
+    searchTriggered: (state, action: PayloadAction<GetIndicesRequest>) => {
+      state.latestSearchRequest = {
+        ...action.payload,
+      };
     },
   },
 });
 
-export const { dummy } = questionSlice.actions;
+export const { searchTriggered } = questionSlice.actions;
 export const questionReducer = questionSlice.reducer;

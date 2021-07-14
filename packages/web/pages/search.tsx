@@ -1,7 +1,7 @@
 import Layout from '../components/Layout';
 import { useState } from 'react';
 import SearchBar from '../components/SearchBar';
-import ListContainer from '../components/ListContainer';
+import IndexItem from '../components/IndexItem';
 import { Index } from '@what-is-grass/shared';
 
 const Search: React.FC = () => {
@@ -16,7 +16,9 @@ const Search: React.FC = () => {
       <h1>ここは検索画面だよ！！</h1>
       <hr />
       <SearchBar setQuestions={updateQuestion} />
-      <ListContainer questions={questions} />
+      {questions.map((question) => (
+        <IndexItem key={question.index_id} question={question} />
+      ))}
     </Layout>
   );
 };
