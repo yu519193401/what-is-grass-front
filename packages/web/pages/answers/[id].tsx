@@ -1,6 +1,6 @@
 import AnswerList from '../../components/AnswerList';
 import { useLazyGetAnswersQuery } from '@what-is-grass/shared';
-import { useRouter } from 'next/router';
+import router, { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 const QuestionAnswer: React.FC = () => {
@@ -15,10 +15,18 @@ const QuestionAnswer: React.FC = () => {
     }
   }, [isReady]);
 
+  const handleNewAnswerClick = () => {
+    router.push(`/new-answer/${indexId}`);
+  };
+
   return (
     <div>
       <h1>ここは質問回答覧</h1>
-      <button>回答</button>
+      {indexId && (
+        <button type="button" onClick={handleNewAnswerClick}>
+          この見出しに回答する
+        </button>
+      )}
       <div>{data && <AnswerList answers={data} />}</div>
       {isLoading ? 'ロード中...' : null}
     </div>
