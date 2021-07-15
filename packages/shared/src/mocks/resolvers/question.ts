@@ -57,3 +57,43 @@ export const getQuestions: Resolver = (_, res, ctx) => {
     })
   );
 };
+
+export const getUserQuestions: Resolver = (_, res, ctx) => {
+  return res(
+    ctx.status(200),
+    ctx.json({
+      indices: [
+        {
+          index_id: 1,
+          index: 'ここはどこですか',
+          questioner: 'ATG',
+          frequently_used_count: 5,
+          answer_count: 1,
+          language_id: 2,
+          best_answer: 'すみません。分かりませんでした。',
+          date: '2021-07-11',
+        },
+        {
+          index_id: 2,
+          index: '私は誰ですか',
+          questioner: 'Mshita',
+          frequently_used_count: 0,
+          answer_count: 5,
+          language_id: 2,
+          best_answer: 'そんなことより進捗どうですか',
+          date: '2021-07-13',
+        },
+        {
+          index_id: 3,
+          index: 'hello world',
+          questioner: 'Mshita',
+          frequently_used_count: 10000,
+          answer_count: 1,
+          language_id: 1,
+          best_answer: "it's the begining of the nightmare",
+          date: '2021-07-14',
+        },
+      ],
+    })
+  );
+};

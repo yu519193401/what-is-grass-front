@@ -10,6 +10,7 @@ export {
 export {
   useGetIndicesQuery,
   useLazyGetIndicesQuery,
+  useGetUserIndicesQuery,
   useAddIndexMutation,
   useLazyGetAnswersQuery,
   useGetAnswersQuery,
