@@ -32,3 +32,15 @@ export const editUser: Resolver = (_, res, ctx) => {
     })
   );
 };
+
+export const loginUser: Resolver = (_, res, ctx) => {
+  return res(
+    ctx.status(201),
+    ctx.json({
+      id: 100,
+      username: 'AtamaHagetaro',
+      email: 'hage@hage.com',
+      acces_token: '1',
+    })
+  );
+};

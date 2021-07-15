@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Layout from '../components/Layout';
 import { greet } from '@what-is-grass/shared';
 import { useState, useEffect } from 'react';
+import Login from '../components/Login';
 
 const IndexPage: React.FC = () => {
   const [user, setUser] = useState('World');
@@ -25,6 +26,7 @@ const IndexPage: React.FC = () => {
         </Link>
       </p>
       <br />
+      <Login />
     </Layout>
   );
 };
