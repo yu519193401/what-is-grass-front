@@ -1,5 +1,5 @@
 import { rest } from 'msw';
-import { editUser, getUser, newUser } from './resolvers/user';
+import { editUser, getUser, loginUser, newUser } from './resolvers/user';
 import {
   newQuestion,
   getQuestions,
@@ -16,4 +16,5 @@ export const handlers = [
   rest.post('/answer', newAnswer),
   rest.post('/signup', newUser),
   rest.post('/user/edit', editUser),
+  rest.post('/login', loginUser),
 ];
