@@ -1,11 +1,12 @@
 import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
 import { useAddAnswerMutation } from '@what-is-grass/shared';
 
 type FormValues = {
   definition: string;
+  example: { sentence: string }[];
   origin: string;
   note: string;
 };
@@ -18,20 +19,24 @@ const NewAnswerPage: React.FC = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<FormValues>({
+    defaultValues: { example: [{ sentence: '' }] },
+  });
 
-  const onSubmit: SubmitHandler<FormValues> = ({
-    definition,
-    origin,
-    note,
-  }) => {
-    addAnswer({
+  const { fields, append, remove } = useFieldArray({
+    name: 'example',
+    control: control,
+  });
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    const newAnswer = {
       index_id: +id,
-      definition: definition,
-      origin: origin,
-      note: note,
-    });
+      ...data,
+      example: data.example.map((e) => e.sentence),
+    };
+    addAnswer(newAnswer);
   };
 
   return (
@@ -48,9 +53,24 @@ const NewAnswerPage: React.FC = () => {
           由来: <textarea name="origin" ref={register()} />
         </label>
         <br />
-        <label>
-          例文: <input type="text" />
-        </label>
+        {fields.map((example, index) => (
+          <label key={example.id}>
+            {`例文${index}: `}
+            <input
+              type="text"
+              name={`example[${index}].sentence`}
+              ref={register()}
+              defaultValue={example.sentence}
+            />
+            <button type="button" onClick={() => remove(index)}>
+              この例文を削除
+            </button>
+            <br />
+          </label>
+        ))}
+        <button type="button" onClick={() => append({})}>
+          もっと例文を追加
+        </button>
         <br />
         <label>
           備考: <textarea name="note" ref={register()} />
