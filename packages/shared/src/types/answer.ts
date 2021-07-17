@@ -15,7 +15,7 @@ export type NewAnswerRequest = {
   definition: Answer['definition'];
   origin?: Answer['origin'];
   note?: Answer['note'];
-  example?: Pick<Example, 'example_sentence'>[];
+  example?: Example['example_sentence'][];
 };
 export type NewAnswerResponse = Answer;
 

@@ -1,20 +1,14 @@
 import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
 import { useAddAnswerMutation } from '@what-is-grass/shared';
 
-const useFormValue: <T>(updater: (e: React.ChangeEvent<T>) => string) => {
-  value: string;
-  onChange: (e: React.ChangeEvent<T>) => void;
-} = (updater) => {
-  const [value, setValue] = useState('');
-
-  return {
-    value,
-    onChange: (e) => {
-      setValue(updater(e));
-    },
-  };
+type FormValues = {
+  definition: string;
+  example: { sentence: string }[];
+  origin: string;
+  note: string;
 };
 
 const NewAnswerPage: React.FC = () => {
@@ -22,49 +16,97 @@ const NewAnswerPage: React.FC = () => {
   const { id } = router.query;
   const [addAnswer, { isLoading }] = useAddAnswerMutation();
 
-  const textAreaUpdater = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    return e.target.value;
+  const {
+    register,
+    handleSubmit,
+    control,
+    getValues,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: { example: [{ sentence: '' }] },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    name: 'example',
+    control: control,
+  });
+
+  const onAppendExample = (defaultValue: { example?: string }) => {
+    const { example } = getValues();
+    const emptyFields = example.filter((e) => e.sentence === '');
+
+    if (emptyFields.length === 0) {
+      append(defaultValue);
+    }
   };
 
-  const definition = useFormValue<HTMLTextAreaElement>(textAreaUpdater);
+  const onRemoveExample = (index: number) => {
+    if (fields.length > 1) {
+      remove(index);
+    }
+  };
 
-  const origin = useFormValue<HTMLTextAreaElement>(textAreaUpdater);
+  const disableRemove = fields.length === 1;
+  const disableAppend =
+    watch('example').filter((e) => e.sentence === '').length !== 0;
 
-  const note = useFormValue<HTMLTextAreaElement>(textAreaUpdater);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    addAnswer({
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    const example = data.example.filter((e) => e.sentence !== '');
+    const newAnswer = {
       index_id: +id,
-      definition: definition.value,
-      origin: origin.value,
-      note: note.value,
-    });
+      ...data,
+      example: example.map((e) => e.sentence),
+    };
+    addAnswer(newAnswer);
   };
 
   return (
     <Layout title="New Answer">
       <h1>回答してあげよう</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <label>
           意味:
-          <textarea {...definition} />
+          <textarea name="definition" ref={register({ required: true })} />
+          {errors.definition && <span>意味だけは答えてちょうだいな</span>}
         </label>
         <br />
         <label>
-          由来: <textarea {...origin} />
+          由来: <textarea name="origin" ref={register()} />
         </label>
+        <br />
+        {fields.map((example, index) => (
+          <label key={example.id}>
+            {`例文${index}: `}
+            <input
+              type="text"
+              name={`example[${index}].sentence`}
+              ref={register()}
+              defaultValue={example.sentence}
+            />
+            <button
+              type="button"
+              onClick={() => onRemoveExample(index)}
+              disabled={disableRemove}
+            >
+              この例文を削除
+            </button>
+            <br />
+          </label>
+        ))}
+        <button
+          type="button"
+          onClick={() => onAppendExample({})}
+          disabled={disableAppend}
+        >
+          もっと例文を追加
+        </button>
         <br />
         <label>
-          例文: <input type="text" />
+          備考: <textarea name="note" ref={register()} />
         </label>
         <br />
-        <label>
-          備考: <textarea {...note} />
-        </label>
-        <br />
-        <input type="submit" value="回答" disabled={isLoading} />
+        <input type="submit" disabled={isLoading} />
         {isLoading ? '送信中...' : null}
       </form>
     </Layout>
