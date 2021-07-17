@@ -52,10 +52,11 @@ const NewAnswerPage: React.FC = () => {
     watch('example').filter((e) => e.sentence === '').length !== 0;
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
+    const example = data.example.filter((e) => e.sentence !== '');
     const newAnswer = {
       index_id: +id,
       ...data,
-      example: data.example.map((e) => e.sentence),
+      example: example.map((e) => e.sentence),
     };
     addAnswer(newAnswer);
   };
