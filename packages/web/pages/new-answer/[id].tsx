@@ -20,6 +20,8 @@ const NewAnswerPage: React.FC = () => {
     register,
     handleSubmit,
     control,
+    getValues,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: { example: [{ sentence: '' }] },
@@ -30,6 +32,15 @@ const NewAnswerPage: React.FC = () => {
     control: control,
   });
 
+  const onAppendExample = (defaultValue: { example?: string }) => {
+    const { example } = getValues();
+    const emptyFields = example.filter((e) => e.sentence === '');
+
+    if (emptyFields.length === 0) {
+      append(defaultValue);
+    }
+  };
+
   const onRemoveExample = (index: number) => {
     if (fields.length > 1) {
       remove(index);
@@ -37,6 +48,8 @@ const NewAnswerPage: React.FC = () => {
   };
 
   const disableRemove = fields.length === 1;
+  const disableAppend =
+    watch('example').filter((e) => e.sentence === '').length !== 0;
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const newAnswer = {
@@ -80,7 +93,11 @@ const NewAnswerPage: React.FC = () => {
             <br />
           </label>
         ))}
-        <button type="button" onClick={() => append({})}>
+        <button
+          type="button"
+          onClick={() => onAppendExample({})}
+          disabled={disableAppend}
+        >
           もっと例文を追加
         </button>
         <br />
