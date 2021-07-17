@@ -30,6 +30,14 @@ const NewAnswerPage: React.FC = () => {
     control: control,
   });
 
+  const onRemoveExample = (index: number) => {
+    if (fields.length > 1) {
+      remove(index);
+    }
+  };
+
+  const disableRemove = fields.length === 1;
+
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const newAnswer = {
       index_id: +id,
@@ -62,7 +70,11 @@ const NewAnswerPage: React.FC = () => {
               ref={register()}
               defaultValue={example.sentence}
             />
-            <button type="button" onClick={() => remove(index)}>
+            <button
+              type="button"
+              onClick={() => onRemoveExample(index)}
+              disabled={disableRemove}
+            >
               この例文を削除
             </button>
             <br />
