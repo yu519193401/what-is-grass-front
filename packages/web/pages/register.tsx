@@ -10,7 +10,7 @@ type FormValue = {
   repeatPassword: string;
 };
 
-const answerFormSchema = yup.object({
+const newUserFormSchema = yup.object({
   username: yup.string().required(),
   email: yup.string().required().email(),
   password: yup.string().required().min(8),
@@ -28,7 +28,7 @@ const NewUser: React.FC = () => {
     formState: { isSubmitted },
     handleSubmit,
   } = useForm<FormValue>({
-    resolver: yupResolver(answerFormSchema),
+    resolver: yupResolver(newUserFormSchema),
   });
 
   const onSubmit: SubmitHandler<FormValue> = ({
