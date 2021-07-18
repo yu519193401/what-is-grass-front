@@ -1,5 +1,7 @@
 import Layout from '../components/Layout';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 type FormValue = {
   username: string;
@@ -8,35 +10,32 @@ type FormValue = {
   repeatPassword: string;
 };
 
+const answerFormSchema = yup.object({
+  username: yup.string().required(),
+  email: yup.string().required().email(),
+  password: yup.string().required().min(8),
+  repeatPassword: yup
+    .string()
+    .required()
+    .oneOf([yup.ref('password')]),
+});
+
 const NewUser: React.FC = () => {
-  const { register, handleSubmit } = useForm<FormValue>();
+  const {
+    register,
+    errors,
+    trigger,
+    formState: { isSubmitted },
+    handleSubmit,
+  } = useForm<FormValue>({
+    resolver: yupResolver(answerFormSchema),
+  });
+
   const onSubmit: SubmitHandler<FormValue> = ({
     username,
     email,
     password,
-    repeatPassword,
   }) => {
-    if (!username.trim()) {
-      alert('ユーザ名を入力してください');
-      return;
-    }
-    if (!email.trim()) {
-      alert('メールアドレスを入力してください');
-      return;
-    }
-    if (!password.trim()) {
-      alert('パスワードを入力してください');
-      return;
-    }
-    if (!repeatPassword.trim()) {
-      alert('パスワードを入力してください');
-      return;
-    }
-    if (repeatPassword !== password) {
-      alert('パスワードが一致していません');
-      return;
-    }
-
     fetch('/signup', {
       method: 'POST',
       headers: {
@@ -59,6 +58,7 @@ const NewUser: React.FC = () => {
               ref={register()}
               type="text"
             />
+            {errors.username?.message}
           </div>
           <div>
             <p>メールアドレス</p>
@@ -68,6 +68,7 @@ const NewUser: React.FC = () => {
               type="text"
               ref={register()}
             />
+            {errors.email?.message}
           </div>
           <div>
             <p>パスワード</p>
@@ -76,7 +77,15 @@ const NewUser: React.FC = () => {
               name="password"
               type="password"
               ref={register()}
+              // onChangeの発火元フォームのみrevalidateされるので
+              // パスワード確認フォームは手動でrevalidateする
+              onChange={() => {
+                if (isSubmitted) {
+                  trigger('repeatPassword');
+                }
+              }}
             />
+            {errors.password?.message}
           </div>
           <br />
           <div>
@@ -87,6 +96,7 @@ const NewUser: React.FC = () => {
               type="password"
               ref={register()}
             ></input>
+            {errors.repeatPassword?.message}
           </div>
           <div>
             <input type="submit" value="登録" />
