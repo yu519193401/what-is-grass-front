@@ -1,58 +1,59 @@
 import Layout from '../components/Layout';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
+type FormValue = {
+  username: string;
+  email: string;
+};
+
+const editUserFormSchema = yup.object({
+  username: yup.string().required(),
+  email: yup.string().required().email(),
+});
 
 const Edit: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
+  const { register, errors, setValue, handleSubmit } = useForm<FormValue>({
+    resolver: yupResolver(editUserFormSchema),
+  });
 
-  useEffect(() => {
-    const callUser = async () => {
-      const res = await fetch('/user');
-      const data = await res.json();
-      setUsername(data.username);
-      setEmail(data.email);
-    };
-    callUser();
-  }, []);
-
-  async function handleOnSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const res = await fetch('/user/edit', {
+  const onSubmit: SubmitHandler<FormValue> = ({ username, email }) => {
+    fetch('/user/edit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ username, email }),
     });
-    const data = await res.json();
-    console.log(data);
-  }
-
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
   };
 
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
-  };
+  useEffect(() => {
+    const callUser = async () => {
+      const res = await fetch('/user');
+      const data = await res.json();
+      setValue('username', data.username);
+      setValue('email', data.email);
+    };
+    callUser();
+  }, []);
 
   return (
     <Layout title="UserEdit">
       <h1>ユーザ情報変更画面</h1>
-      <form onSubmit={handleOnSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="well">
           <h4>ユーザ情報</h4>
           <div>
             <label>ユーザ名</label>
-            <input
-              type="text"
-              value={username}
-              onChange={handleUsernameChange}
-            />
+            <input type="text" name="username" ref={register} />
+            {errors.username?.message}
           </div>
           <div>
             <label>メールアドレス</label>
-            <input type="text" value={email} onChange={handleEmailChange} />
+            <input type="text" name="email" ref={register} />
+            {errors.email?.message}
           </div>
           <button type="submit">変更</button>
         </div>
