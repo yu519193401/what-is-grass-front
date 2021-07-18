@@ -1,54 +1,46 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
+type FormValue = {
+  email: string;
+  password: string;
+};
+
+const loginFormSchema = yup.object({
+  email: yup.string().required().email(),
+  password: yup.string().required().min(8),
+});
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { register, errors, handleSubmit } = useForm<FormValue>({
+    resolver: yupResolver(loginFormSchema),
+  });
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!email || !email.trim()) {
-      alert('メールアドレスを入力してください');
-      return;
-    }
-    if (!password || !password.trim()) {
-      alert('パスワードを入力してください');
-      return;
-    }
-
-    const res = await fetch('/login', {
+  const onSubmit: SubmitHandler<FormValue> = ({ email, password }) => {
+    fetch('/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email, password }),
     });
-    const data = await res.json();
-    console.log(data);
-  }
-
-  function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setEmail(event.target.value);
-  }
-
-  function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setPassword(event.target.value);
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="L-box">
         <div className="L-Input">
           <div className="L-Ew">
             <p>E-mail</p>
-            <input type="text" value={email} onChange={handleEmailChange} />
+            <input type="text" name="email" ref={register} />
+            {errors.email?.message}
           </div>
           <div className="L-Pw">
             <p>パスワード</p>
-            <input
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-            />
+            <input type="password" name="password" ref={register} />
+            {errors.password?.message}
           </div>
           <input type="submit" value="ログイン" />
         </div>
