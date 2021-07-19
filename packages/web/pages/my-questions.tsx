@@ -1,33 +1,38 @@
 import Layout from '../components/Layout';
-import React, { useState } from 'react';
+import React from 'react';
 import IndexItem from '../components/IndexItem';
 import { useGetUserIndicesQuery } from '@what-is-grass/shared';
+import { useForm } from 'react-hook-form';
+
+const NOT_SELECTED = -1;
+
+type FormValue = {
+  languageId: number;
+  includeNoAnswerId: number;
+  sortId: number;
+};
 
 const MyQuestions: React.FC = () => {
-  const [languageId, setLanguageId] = useState<number | null>(null);
-  const [includeNoAnswerId, setIncludeNoAnswerId] = useState(1);
-  const [sortId, setSortId] = useState(1);
+  const { register, watch } = useForm<FormValue>({
+    defaultValues: {
+      languageId: NOT_SELECTED,
+      includeNoAnswerId: 1,
+      sortId: 1,
+    },
+  });
 
-  const reqestBody = {
-    languageId: languageId || void 0,
+  const languageId = watch('languageId');
+  const includeNoAnswerId = watch('includeNoAnswerId');
+  const sortId = watch('sortId');
+
+  const requestBody = {
+    //language_idだけ未指定で全てとかいう謎仕様にしてしまったので
+    language_id: languageId === NOT_SELECTED ? void 0 : languageId,
     include_no_answer: includeNoAnswerId,
     sort: sortId,
   };
-  const { data: questions } = useGetUserIndicesQuery(reqestBody);
 
-  const handleLanguageIdChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLanguageId(+e.target.value);
-  };
-
-  const handleIncludeNoAnswerIdChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setIncludeNoAnswerId(+e.target.value);
-  };
-
-  const handleSortIdChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortId(+e.target.value);
-  };
+  const { data: questions } = useGetUserIndicesQuery(requestBody);
 
   return (
     <Layout title="Search">
@@ -35,10 +40,11 @@ const MyQuestions: React.FC = () => {
       <label>
         言語で絞る:
         <select
+          name="languageId"
+          ref={register({ valueAsNumber: true })}
           className="search-lauguage"
-          value={languageId || 1}
-          onChange={handleLanguageIdChange}
         >
+          <option value={NOT_SELECTED}>全て</option>
           <option value="1">日本語</option>
           <option value="2">英語</option>
         </select>
@@ -46,7 +52,11 @@ const MyQuestions: React.FC = () => {
       <br />
       <label>
         並び替え:
-        <select className="sort" value={sortId} onChange={handleSortIdChange}>
+        <select
+          name="sortId"
+          ref={register({ valueAsNumber: true })}
+          className="sort"
+        >
           <option value="1">日付</option>
           <option value="2">役立Count</option>
           <option value="3">回答者数</option>
@@ -56,9 +66,9 @@ const MyQuestions: React.FC = () => {
       <label>
         回答状況で絞る:
         <select
+          name="includeNoAnswerId"
+          ref={register({ valueAsNumber: true })}
           className="include_no_answer"
-          value={includeNoAnswerId}
-          onChange={handleIncludeNoAnswerIdChange}
         >
           <option value="1">全て</option>
           <option value="2">回答あり</option>

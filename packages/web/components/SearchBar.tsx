@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   searchTriggered,
   useSelector,
@@ -9,40 +9,60 @@ import {
 import { useEffect } from 'react';
 import { shallowEqual } from 'react-redux';
 import { useRouter } from 'next/router';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 type Props = {
   setQuestions: (questions: Index[]) => void;
 };
 
+type FormValue = {
+  keyword: string;
+  languageId: number;
+  includeNoAnswerId: number;
+  sortId: number;
+};
+
+const searchFormSchema = yup.object({
+  keyword: yup.string(),
+  languageId: yup.number(),
+  includeNoAnswerId: yup.number(),
+  sortId: yup.number(),
+});
+
 const SearchBar: React.FC<Props> = (props) => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const latestSearchRequest = useSelector(
     (state) => state.questions.latestSearchRequest,
     shallowEqual
   );
 
-  const [keyword, setSearch] = useState(latestSearchRequest?.keyword ?? '');
-  const [languageId, setLanguageId] = useState(
-    latestSearchRequest?.language_id ?? 1
-  );
-  const [includeNoAnswerId, setIncludeNoAnswerId] = useState(
-    latestSearchRequest?.include_no_answer ?? 1
-  );
-  const [sortId, setSortId] = useState(latestSearchRequest?.sort ?? 1);
-
   const { data, isLoading } = useGetIndicesQuery(latestSearchRequest!, {
     skip: latestSearchRequest === null,
   });
 
-  const router = useRouter();
+  const { register, handleSubmit, getValues } = useForm<FormValue>({
+    defaultValues: {
+      keyword: latestSearchRequest?.keyword ?? '',
+      languageId: latestSearchRequest?.language_id ?? 1,
+      includeNoAnswerId: latestSearchRequest?.include_no_answer ?? 1,
+      sortId: latestSearchRequest?.sort ?? 1,
+    },
+    resolver: yupResolver(searchFormSchema),
+  });
 
   useEffect(() => {
     data && props.setQuestions(data);
   }, [data]);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
+  const onSubmit: SubmitHandler<FormValue> = ({
+    keyword,
+    languageId,
+    includeNoAnswerId,
+    sortId,
+  }) => {
     const body = {
       keyword,
       language_id: languageId,
@@ -51,52 +71,30 @@ const SearchBar: React.FC<Props> = (props) => {
     };
 
     dispatch(searchTriggered(body));
-  }
-
-  function handleKeywordChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setSearch(event.target.value.toLowerCase());
-  }
-
-  function handleLanguageIdChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setLanguageId(+event.target.value);
-  }
-
-  function handleSortIdChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setSortId(+event.target.value);
-  }
-
-  function handleIncludeNoAnswerIdChange(
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) {
-    setIncludeNoAnswerId(+event.target.value);
-  }
+  };
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="search-box">
           <div className="search-input">
             <input
+              name="keyword"
+              ref={register}
               placeholder="なんかを聞きたいの？"
               aria-label="なんかを聞きたいの？"
-              value={keyword}
-              onChange={handleKeywordChange}
             />
             <input type="submit" value="検索" disabled={isLoading} />
           </div>
         </div>
         <div>
-          <select
-            className="search-lauguage"
-            value={languageId}
-            onChange={handleLanguageIdChange}
-          >
+          <select name="languageId" ref={register} className="search-lauguage">
             <option value="1">日本語</option>
             <option value="2">英語</option>
           </select>
         </div>
         <div>
-          <select className="sort" value={sortId} onChange={handleSortIdChange}>
+          <select name="sortId" ref={register} className="sort">
             <option value="1">日付</option>
             <option value="2">役立Count</option>
             <option value="3">回答者数</option>
@@ -104,9 +102,9 @@ const SearchBar: React.FC<Props> = (props) => {
         </div>
         <div>
           <select
+            name="includeNoAnswer"
+            ref={register}
             className="include_no_answer"
-            value={includeNoAnswerId}
-            onChange={handleIncludeNoAnswerIdChange}
           >
             <option value="1">全て</option>
             <option value="2">回答あり</option>
@@ -117,11 +115,12 @@ const SearchBar: React.FC<Props> = (props) => {
 
       <button
         className="float-right"
+        type="button"
         onClick={() => {
           router.push({
             pathname: '/new-question',
             query: {
-              keyword,
+              keyword: getValues('keyword'),
             },
           });
         }}
