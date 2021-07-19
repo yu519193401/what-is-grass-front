@@ -2,6 +2,8 @@ import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useForm, useFieldArray, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import { useAddAnswerMutation } from '@what-is-grass/shared';
 
 type FormValues = {
@@ -11,21 +13,23 @@ type FormValues = {
   note: string;
 };
 
+const newAnswerFormSchema = yup.object({
+  definition: yup.string().required(),
+  example: yup.array(yup.object({ sentence: yup.string() })),
+  origin: yup.string(),
+  note: yup.string(),
+});
+
 const NewAnswerPage: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
   const [addAnswer, { isLoading }] = useAddAnswerMutation();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    getValues,
-    watch,
-    formState: { errors },
-  } = useForm<FormValues>({
-    defaultValues: { example: [{ sentence: '' }] },
-  });
+  const { register, handleSubmit, control, getValues, watch, errors } =
+    useForm<FormValues>({
+      defaultValues: { example: [{ sentence: '' }] },
+      resolver: yupResolver(newAnswerFormSchema),
+    });
 
   const { fields, append, remove } = useFieldArray({
     name: 'example',
@@ -91,6 +95,7 @@ const NewAnswerPage: React.FC = () => {
             >
               この例文を削除
             </button>
+            {errors.example?.[index]?.sentence?.message}
             <br />
           </label>
         ))}
