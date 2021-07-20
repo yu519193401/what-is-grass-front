@@ -19,7 +19,7 @@ const IndexPage: React.FC = () => {
 
   return (
     <Layout title="Home">
-      <h1>{greet(user)}</h1>
+      <h1 className="text-xl border-black border-2">{greet(user)}</h1>
       <p>
         <Link href="/about">
           <a>About</a>
