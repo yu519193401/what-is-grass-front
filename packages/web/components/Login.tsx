@@ -30,19 +30,34 @@ const Login: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="L-box">
-        <div className="L-Input">
-          <div className="L-Ew">
-            <p>E-mail</p>
-            <input type="text" name="email" ref={register} />
+      <div className="m-0 p-0 font-sans:sans-serif">
+        <div className="absolute top-1/4 left-2/3 w-80 h-96 p-40 bg-yellow-500 bg-opacity-75 box-border shadow-sm rounded-tl-lg rounded-br-lg">
+          <h2 className="p-0 text-green-100 text-3xl text-center"> ログイン</h2>
+          <div className="relative">
+            <p className="text-green-100">E-mail</p>
+            <input
+              type="text"
+              className="relative outline-none border border-gray-400 rounded py-1 px-2  bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-green-400 focus:ring-1"
+              ref={register}
+            />
             {errors.email?.message}
           </div>
           <div className="L-Pw">
-            <p>パスワード</p>
-            <input type="password" name="password" ref={register} />
+            <p className="text-green-100">パスワード</p>
+            <input
+              type="password"
+              className="relative outline-none border border-gray-400 rounded py-1 px-2  bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-green-400 focus:ring-1"
+              ref={register}
+              maxLength={16}
+            />
             {errors.password?.message}
           </div>
-          <input type="submit" value="ログイン" />
+          <button
+            className="transition duration-300 ease-in-out m-3 py-2 px-4 bg-green-500 rounded text-white font-normal focus:outline-none focus:ring hover:bg-green-600 active:bg-green-800"
+            type="submit"
+          >
+            ログイン
+          </button>
         </div>
       </div>
     </form>
